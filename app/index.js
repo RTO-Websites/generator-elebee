@@ -166,18 +166,21 @@ class GeneratorBase extends Generator {
 
     this.initializationCount = 0;
 
-    ExecuteCommand('npm install', execOptions, () => {
+    var npmInstall = new ExecuteCommand('npm install', execOptions, () => {
       this.finishThemeInitialization()
     });
+    npmInstall.exec();
 
-    ExecuteCommand('bower install', execOptions, () => {
+    var bowerInstall = new ExecuteCommand('bower install', execOptions, () => {
       this.finishThemeInitialization()
     });
+    bowerInstall.exec();
 
     execOptions.cwd = this.themePath + '/src';
-    ExecuteCommand('composer install', execOptions, () => {
+    var composerInstall = new ExecuteCommand('composer install', execOptions, () => {
       this.finishThemeInitialization()
     });
+    composerInstall.exec();
 
   }
 

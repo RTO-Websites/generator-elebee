@@ -5,40 +5,91 @@
  */
 'use strict';
 
-var exec = require('child_process').exec,
-    executeCommand;
+const ChildProcess = require('child_process');
 
 /**
- * Execute a command using the NodeJS 'child_process' module.
+ * Handles command execution using the NodeJS 'child_process' module.
  *
- * @param {string} cmd - Command to execute
- * @param {object} execOptions - Options to pass to 'exec' funtion
- * @param {function} [cb] - Callback function when command was
- * executed successfully.
- * @return {void}
+ * @since 0.2.0
  */
-executeCommand = module.exports = function(cmd, execOptions, cb) {
-  console.log('Running "' + cmd + '"...');
-  var child = exec(cmd, execOptions, function(error, stdout, stderr) {
-    if (typeof(cb) === 'function') {
-      cb();
-    }
-  });
+class ExecuteCommand {
 
-  child.stdout.on('data', function(data) {
-    var str = data.toString();
-    str.split(/(\r?\n)/g).forEach(function(line, index) {
-      if(line !== '\n' && line !== '') {
-      console.log(line);
-    }
+  /**
+   *
+   * @param cmd
+   * @param execOptions
+   * @param cb
+   */
+  constructor(cmd, execOptions, cb) {
+
+    this.cmd = cmd;
+    this.execOptions = execOptions;
+    this.cb = cb;
+
+  }
+
+  /**
+   *
+   */
+  exec() {
+
+    console.log('Running "' + this.cmd + '"...');
+
+    var child = ChildProcess.exec(this.cmd, this.execOptions, (error, stdout, stderr) => {
+      if (typeof(this.cb) === 'function') {
+        this.cb();
+      }
     });
-  });
 
-  child.stderr.on('data', function(data) {
-    console.log(data);
-  });
+    child.stdout.on('data', (data) => {
+      this.onData(data);
+    });
 
-  child.on('close', function(code) {
-    console.log('Finished "' + cmd + '" with code ' + code);
-  });
-};
+    child.stderr.on('data', (data) => {
+      this.onError(data);
+    });
+
+    child.on('close', (code) => {
+      this.onClose(code)
+    });
+
+  }
+
+  /**
+   *
+   * @param data
+   */
+  onData(data) {
+
+    var str = data.toString();
+    str.split(/(\r?\n)/g).forEach((line, index) => {
+      if (line !== '\n' && line !== '') {
+        console.log(line);
+      }
+    });
+
+  }
+
+  /**
+   *
+   * @param error
+   */
+  onError(error) {
+
+    console.log(error);
+
+  }
+
+  /**
+   *
+   * @param code
+   */
+  onClose(code) {
+
+    console.log('Finished "' + this.cmd + '" with code ' + code);
+
+  }
+
+}
+
+module.exports = ExecuteCommand;
