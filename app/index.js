@@ -226,6 +226,11 @@ class GeneratorBase extends Generator {
  */
 class GeneratorElebee extends GeneratorBase {
 
+  /**
+   *
+   * @param args
+   * @param opts
+   */
   constructor(args, opts) {
 
     super(args, opts);
@@ -234,6 +239,10 @@ class GeneratorElebee extends GeneratorBase {
 
   }
 
+  /**
+   *
+   * @returns {PromiseLike<T> | Promise<T>}
+   */
   prompting() {
 
     return this.prompt([
