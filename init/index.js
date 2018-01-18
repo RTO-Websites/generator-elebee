@@ -7,7 +7,7 @@
  *   Yeoman generator for initializing elebee.
  * @example
  *   Usage:
- *     yo elebee:loadDependencies
+ *     yo elebee:init
  */
 'use strict';
 
@@ -49,6 +49,8 @@ class GeneratorInit extends GeneratorBase {
   }
 
   /**
+   * The init task.
+   *
    * @since 0.2.0
    */
   init() {
@@ -63,6 +65,6 @@ class GeneratorInit extends GeneratorBase {
 
 /**
  *
- * @type {module.exports}
+ * @type {GeneratorInit}
  */
 module.exports = GeneratorInit;
