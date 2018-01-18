@@ -22,6 +22,9 @@ const Spinner = require('cli-spinner').Spinner;
 const _ = require('underscore.string');
 const ExecuteCommand = require('./execute-command.js');
 
+/**
+ *
+ */
 class GeneratorBase extends Generator {
 
   constructor(args, opts) {
@@ -197,7 +200,7 @@ class GeneratorBase extends Generator {
       'Copyright 2018 RTO GmbH\n' +
       '*/';
 
-    Fs.writeFile(this.themePath + '/src/style.scss', styleCSS );
+    Fs.writeFile(this.themePath + '/src/style.css', styleCSS);
 
   }
 
@@ -212,7 +215,7 @@ class GeneratorBase extends Generator {
       return
     }
 
-    console.log('\nTheme initialized!');
+    console.log('\nTheme initialized! You are ready to go.');
 
   }
 
@@ -220,9 +223,8 @@ class GeneratorBase extends Generator {
 
 /**
  *
- * @type {module.exports}
  */
-module.exports = class extends GeneratorBase {
+class GeneratorElebee extends GeneratorBase {
 
   constructor(args, opts) {
 
@@ -323,4 +325,10 @@ module.exports = class extends GeneratorBase {
 
   }
 
-};
+}
+
+/**
+ *
+ * @type {module.exports}
+ */
+module.exports = GeneratorElebee;
