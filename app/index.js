@@ -10,11 +10,14 @@
  */
 'use strict';
 
+const pkg = require('../package');
 const Generator = require('yeoman-generator');
 const Yosay = require('yosay');
 const Download = require('download');
 const Fs = require('fs');
 const FsExtra = require('fs.extra');
+const UpdateNotifier = require('update-notifier');
+const Notifier = UpdateNotifier({pkg});
 const Spinner = require('cli-spinner').Spinner;
 const _ = require('underscore.string');
 const ExecuteCommand = require('./execute-command.js');
@@ -24,6 +27,8 @@ class GeneratorBase extends Generator {
   constructor(args, opts) {
 
     super(args, opts);
+
+    Notifier.notify();
 
     this.spinner = new Spinner();
     this.spinner.setSpinnerString('|/-\\');
