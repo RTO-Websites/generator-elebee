@@ -158,7 +158,7 @@ class GeneratorBase extends Generator {
 
     console.log('Initializing theme...');
 
-    this.setupStyleScss();
+    this.setupStyleCss();
 
     var execOptions = {
       cwd: this.themePath
@@ -187,7 +187,7 @@ class GeneratorBase extends Generator {
   /**
    *
    */
-  setupStyleScss() {
+  setupStyleCss() {
 
     var styleCSS =
       '/*\n' +
