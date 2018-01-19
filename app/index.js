@@ -62,6 +62,7 @@ class GeneratorBase extends Generator {
    */
   installWp() {
 
+    console.log('');
     this.spinner.setSpinnerTitle('Installing Wordpress... %s');
     this.spinner.start();
 
@@ -82,11 +83,16 @@ class GeneratorBase extends Generator {
    */
   unpackWp() {
 
-    this.tmpDir = this.projectPath + '/' + this.options.projectName;
-    Fs.renameSync(this.projectPath + '/wordpress', this.tmpDir);
-    FsExtra.copyRecursive(this.tmpDir, this.projectPath, (error) => {
-      this.finishWpInstallation(error);
-    });
+    try {
+      this.tmpDir = this.projectPath + '/' + this.options.projectName;
+      Fs.renameSync(this.projectPath + '/wordpress', this.tmpDir);
+      FsExtra.copyRecursive(this.tmpDir, this.projectPath, (error) => {
+        this.finishWpInstallation(error);
+      });
+    }
+    catch (error) {
+      this.onError(error);
+    }
 
   }
 
@@ -113,8 +119,9 @@ class GeneratorBase extends Generator {
    */
   installTheme() {
 
-    this.spinner.setSpinnerTitle('Installing elebee... %s');
-    this.spinner.start();
+    console.log('');
+    // this.spinner.setSpinnerTitle('Installing elebee... %s');
+    // this.spinner.start();
 
     if (!this.options.installWp) {
 
@@ -142,12 +149,17 @@ class GeneratorBase extends Generator {
    */
   finishThemeInstallation() {
 
-    Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
+    try {
+      Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
 
-    this.spinner.stop(true);
-    console.log('elebee installed!');
+      this.spinner.stop(true);
+      console.log('elebee installed!');
 
-    this.initializeTheme();
+      this.initializeTheme();
+    }
+    catch (error) {
+      this.onError(error);
+    }
 
   }
 
@@ -222,7 +234,19 @@ class GeneratorBase extends Generator {
       return
     }
 
-    console.log('Theme initialized! You are ready to go.');
+    console.log('\nTheme initialized! You are ready to go.');
+
+  }
+
+  /**
+   *
+   * @param error
+   */
+  onError(error) {
+
+    this.spinner.stop();
+    console.log('\n');
+    console.error(error);
 
   }
 
