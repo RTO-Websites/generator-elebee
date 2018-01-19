@@ -6,6 +6,7 @@
 'use strict';
 
 const ChildProcess = require('child_process');
+const Spinner = require('cli-spinner').Spinner;
 
 /**
  * Handles command execution using the NodeJS 'child_process' module.
@@ -26,6 +27,9 @@ class ExecuteCommand {
     this.execOptions = execOptions;
     this.cb = cb;
 
+    this.spinner = new Spinner();
+    this.spinner.setSpinnerString('|/-\\');
+
   }
 
   /**
@@ -33,7 +37,7 @@ class ExecuteCommand {
    */
   exec() {
 
-    console.log('Running "' + this.cmd + '"...');
+    this.startLoadingAnimation();
 
     var child = ChildProcess.exec(this.cmd, this.execOptions, (error, stdout, stderr) => {
       if (typeof(this.cb) === 'function') {
@@ -42,16 +46,41 @@ class ExecuteCommand {
     });
 
     child.stdout.on('data', (data) => {
-      this.onData(data);
+      // this.onData(data);
     });
 
     child.stderr.on('data', (data) => {
+
+      this.stopLoadingAnimation();
+
       this.onError(data);
+
+      this.startLoadingAnimation();
+
     });
 
-    child.on('close', (code) => {
-      this.onClose(code)
+    child.on('exit', (code) => {
+      this.onExit(code);
     });
+
+  }
+
+  /**
+   *
+   */
+  startLoadingAnimation() {
+
+    this.spinner.setSpinnerTitle('Running "' + this.cmd + '"... %s');
+    this.spinner.start();
+
+  }
+
+  /**
+   *
+   */
+  stopLoadingAnimation() {
+
+    this.spinner.stop(true);
 
   }
 
@@ -84,8 +113,9 @@ class ExecuteCommand {
    *
    * @param code
    */
-  onClose(code) {
+  onExit(code) {
 
+    this.stopLoadingAnimation();
     console.log('Finished "' + this.cmd + '" with code ' + code);
 
   }

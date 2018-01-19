@@ -102,7 +102,7 @@ class GeneratorBase extends Generator {
     FsExtra.rmrfSync(this.tmpDir);
 
     this.spinner.stop(true);
-    console.log('\nWordPress installed!');
+    console.log('WordPress installed!');
 
     this.installTheme();
 
@@ -145,7 +145,7 @@ class GeneratorBase extends Generator {
     Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
 
     this.spinner.stop(true);
-    console.log('\nelebee installed!');
+    console.log('elebee installed!');
 
     this.initializeTheme();
 
@@ -203,7 +203,11 @@ class GeneratorBase extends Generator {
       'Copyright 2018 RTO GmbH\n' +
       '*/';
 
-    Fs.writeFile(this.themePath + '/src/style.css', styleCSS);
+    Fs.writeFile(this.themePath + '/src/style.css', styleCSS, (error) => {
+      if (error) {
+        console.log(error);
+      }
+    });
 
   }
 
@@ -218,7 +222,7 @@ class GeneratorBase extends Generator {
       return
     }
 
-    console.log('\nTheme initialized! You are ready to go.');
+    console.log('Theme initialized! You are ready to go.');
 
   }
 
