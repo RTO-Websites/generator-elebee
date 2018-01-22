@@ -10,20 +10,28 @@
  */
 'use strict';
 
+const pkg = require('../package');
 const Generator = require('yeoman-generator');
 const Yosay = require('yosay');
 const Download = require('download');
 const Fs = require('fs');
 const FsExtra = require('fs.extra');
+const UpdateNotifier = require('update-notifier');
+const Notifier = UpdateNotifier({pkg});
 const Spinner = require('cli-spinner').Spinner;
 const _ = require('underscore.string');
 const ExecuteCommand = require('./execute-command.js');
 
+/**
+ *
+ */
 class GeneratorBase extends Generator {
 
   constructor(args, opts) {
 
     super(args, opts);
+
+    Notifier.notify();
 
     this.spinner = new Spinner();
     this.spinner.setSpinnerString('|/-\\');
@@ -54,6 +62,7 @@ class GeneratorBase extends Generator {
    */
   installWp() {
 
+    console.log('');
     this.spinner.setSpinnerTitle('Installing Wordpress... %s');
     this.spinner.start();
 
@@ -74,11 +83,16 @@ class GeneratorBase extends Generator {
    */
   unpackWp() {
 
-    this.tmpDir = this.projectPath + '/' + this.options.projectName;
-    Fs.renameSync(this.projectPath + '/wordpress', this.tmpDir);
-    FsExtra.copyRecursive(this.tmpDir, this.projectPath, (error) => {
-      this.finishWpInstallation(error);
-    });
+    try {
+      this.tmpDir = this.projectPath + '/' + this.options.projectName;
+      Fs.renameSync(this.projectPath + '/wordpress', this.tmpDir);
+      FsExtra.copyRecursive(this.tmpDir, this.projectPath, (error) => {
+        this.finishWpInstallation(error);
+      });
+    }
+    catch (error) {
+      this.onError(error);
+    }
 
   }
 
@@ -94,7 +108,7 @@ class GeneratorBase extends Generator {
     FsExtra.rmrfSync(this.tmpDir);
 
     this.spinner.stop(true);
-    console.log('\nWordPress installed!');
+    console.log('WordPress installed!');
 
     this.installTheme();
 
@@ -105,8 +119,9 @@ class GeneratorBase extends Generator {
    */
   installTheme() {
 
-    this.spinner.setSpinnerTitle('Installing elebee... %s');
-    this.spinner.start();
+    console.log('');
+    // this.spinner.setSpinnerTitle('Installing elebee... %s');
+    // this.spinner.start();
 
     if (!this.options.installWp) {
 
@@ -134,12 +149,17 @@ class GeneratorBase extends Generator {
    */
   finishThemeInstallation() {
 
-    Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
+    try {
+      Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
 
-    this.spinner.stop(true);
-    console.log('\nelebee installed!');
+      this.spinner.stop(true);
+      console.log('elebee installed!');
 
-    this.initializeTheme();
+      this.initializeTheme();
+    }
+    catch (error) {
+      this.onError(error);
+    }
 
   }
 
@@ -150,7 +170,7 @@ class GeneratorBase extends Generator {
 
     console.log('Initializing theme...');
 
-    this.setupStyleScss();
+    this.setupStyleCss();
 
     var execOptions = {
       cwd: this.themePath
@@ -158,25 +178,28 @@ class GeneratorBase extends Generator {
 
     this.initializationCount = 0;
 
-    ExecuteCommand('npm install', execOptions, () => {
+    var npmInstall = new ExecuteCommand('npm install', execOptions, () => {
       this.finishThemeInitialization()
     });
+    npmInstall.exec();
 
-    ExecuteCommand('bower install', execOptions, () => {
+    var bowerInstall = new ExecuteCommand('bower install', execOptions, () => {
       this.finishThemeInitialization()
     });
+    bowerInstall.exec();
 
     execOptions.cwd = this.themePath + '/src';
-    ExecuteCommand('composer install', execOptions, () => {
+    var composerInstall = new ExecuteCommand('composer install', execOptions, () => {
       this.finishThemeInitialization()
     });
+    composerInstall.exec();
 
   }
 
   /**
    *
    */
-  setupStyleScss() {
+  setupStyleCss() {
 
     var styleCSS =
       '/*\n' +
@@ -192,7 +215,11 @@ class GeneratorBase extends Generator {
       'Copyright 2018 RTO GmbH\n' +
       '*/';
 
-    Fs.writeFile(this.themePath + '/src/style.scss', styleCSS );
+    Fs.writeFile(this.themePath + '/src/style.css', styleCSS, (error) => {
+      if (error) {
+        console.log(error);
+      }
+    });
 
   }
 
@@ -207,7 +234,19 @@ class GeneratorBase extends Generator {
       return
     }
 
-    console.log('\nTheme initialized!');
+    console.log('\nTheme initialized! You are ready to go.');
+
+  }
+
+  /**
+   *
+   * @param error
+   */
+  onError(error) {
+
+    this.spinner.stop();
+    console.log('\n');
+    console.error(error);
 
   }
 
@@ -215,10 +254,14 @@ class GeneratorBase extends Generator {
 
 /**
  *
- * @type {module.exports}
  */
-module.exports = class extends GeneratorBase {
+class GeneratorElebee extends GeneratorBase {
 
+  /**
+   *
+   * @param args
+   * @param opts
+   */
   constructor(args, opts) {
 
     super(args, opts);
@@ -227,6 +270,10 @@ module.exports = class extends GeneratorBase {
 
   }
 
+  /**
+   *
+   * @returns {PromiseLike<T> | Promise<T>}
+   */
   prompting() {
 
     return this.prompt([
@@ -318,4 +365,10 @@ module.exports = class extends GeneratorBase {
 
   }
 
-};
+}
+
+/**
+ *
+ * @type {module.exports}
+ */
+module.exports = GeneratorElebee;
