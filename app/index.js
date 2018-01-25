@@ -41,7 +41,7 @@ class GeneratorBase extends Generator {
   }
 
   /**
-   *
+   * @since 0.2.1
    */
   initOptionDefinitions() {
 
