@@ -33,8 +33,220 @@ class GeneratorBase extends Generator {
 
     Notifier.notify();
 
+    this.initOptionDefinitions();
+
     this.spinner = new Spinner();
     this.spinner.setSpinnerString('|/-\\');
+
+  }
+
+  /**
+   * @since 0.2.1
+   */
+  initOptionDefinitions() {
+
+    this.optionDefinitions = [
+      // {
+      //   when: (answers) => {
+      //     console.log(this.options.installWp);
+      //     return !this.options.installWp;
+      //   },
+      //   type: 'confirm',
+      //   name: 'installWp',
+      //   message: 'Install Wordpress?',
+      //   store: true,
+      //   help: {
+      //     desc: '',
+      //     alias: 'i',
+      //     type: Boolean
+      //   }
+      // },
+      // {
+      //   when: (answers) => {
+      //     return (answers.installWp || (this.options.installWp && !this.options.wpVersion));
+      //   },
+      //   type: 'input',
+      //   name: 'wpVersion',
+      //   message: 'Version',
+      //   default: 'latest',
+      //   store: true,
+      //   help: {
+      //     desc: '',
+      //     alias: 'v',
+      //     type: String
+      //   }
+      // },
+      {
+        when: (answers) => {
+          return !this.options.projectName;
+        },
+        type: 'input',
+        name: 'projectName',
+        message: 'Project name',
+        default: 'wordpress',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'p',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.authorName;
+        },
+        type: 'input',
+        name: 'authorName',
+        message: 'Author Name',
+        default: 'RTO GmbH',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'a',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.authorEmail;
+        },
+        type: 'input',
+        name: 'authorEmail',
+        message: 'Author E-Mail',
+        default: 'info@rto.de',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'e',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.authorUrl;
+        },
+        type: 'input',
+        name: 'authorUrl',
+        message: 'Author url',
+        default: 'https://www.rto.de/',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'u',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeName;
+        },
+        type: 'input',
+        name: 'themeName',
+        message: 'Enter a theme name',
+        default: 'My Theme Name',
+        help: {
+          desc: '',
+          alias: 't',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeDescription;
+        },
+        type: 'input',
+        name: 'themeDescription',
+        message: 'Enter a description for your theme',
+        default: 'Custom WordPress Theme',
+        help: {
+          desc: '',
+          alias: 'd',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeUrl;
+        },
+        type: 'input',
+        name: 'themeUrl',
+        message: 'Theme url',
+        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee',
+        help: {
+          desc: '',
+          alias: 'T',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.license;
+        },
+        type: 'input',
+        name: 'license',
+        message: 'License',
+        default: 'MIT',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'l',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.licenseUri;
+        },
+        type: 'input',
+        name: 'licenseUri',
+        message: 'License URI',
+        default: 'https://opensource.org/licenses/MIT',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'L',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.repositoryType;
+        },
+        type: 'input',
+        name: 'repositoryType',
+        message: 'Repository type',
+        default: 'git',
+        store: true,
+        help: {
+          desc: '',
+          alias: 'r',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.repositoryUrl;
+        },
+        type: 'input',
+        name: 'repositoryUrl',
+        message: 'Repository url',
+        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee.git',
+        help: {
+          desc: '',
+          alias: 'R',
+          type: String
+        }
+      }
+    ];
+
+    for(let i in this.optionDefinitions) {
+      let option = this.optionDefinitions[i];
+      this.option(option.name, {
+        desc: option.message,
+        alias: option.help.alias,
+        type: option.help.type
+      });
+    }
 
   }
 
@@ -42,13 +254,11 @@ class GeneratorBase extends Generator {
    *
    * @param options
    */
-  install(options) {
+  install() {
 
-    this.options = options;
+    this.projectPath = this.destinationPath(this.options.projectName);
 
-    this.projectPath = this.destinationPath(options.projectName);
-
-    if (options.installWp) {
+    if (this.options.installWp) {
       this.installWp();
     }
     else {
@@ -123,15 +333,15 @@ class GeneratorBase extends Generator {
     // this.spinner.setSpinnerTitle('Installing elebee... %s');
     // this.spinner.start();
 
-    if (!this.options.installWp) {
-
-      Fs.mkdirSync(this.projectPath);
-      Fs.mkdirSync(this.projectPath + '/wp-content');
-
-    }
+    // if (!this.options.installWp) {
+    //
+    //   Fs.mkdirSync(this.projectPath);
+    //   Fs.mkdirSync(this.projectPath + '/wp-content');
+    //
+    // }
 
     this.wpContentPath = this.projectPath + '/wp-content';
-    this.themeSlug = _.camelize(_.slugify(_.humanize(this.options.siteName)));
+    this.themeSlug = _.camelize(_.slugify(_.humanize(this.options.themeName)));
     this.themeUrl = 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee/archive/master.zip';
     this.themePath = this.wpContentPath + '/' + this.themeSlug;
 
@@ -168,6 +378,7 @@ class GeneratorBase extends Generator {
    */
   initializeTheme() {
 
+    console.log('');
     console.log('Initializing theme...');
 
     this.setupStyleCss();
@@ -203,13 +414,13 @@ class GeneratorBase extends Generator {
 
     var styleCSS =
       '/*\n' +
-      'Theme Name: ' + this.options.siteName + '\n' +
-      'Description: ' + this.options.description + '\n' +
+      'Theme Name: ' + this.options.themeName + '\n' +
+      'Description: ' + this.options.themeDescription + '\n' +
       'Author: ' + this.options.authorName + '\n' +
       'Author URI: ' + this.options.authorUrl + '\n' +
       'Version: 0.0.1\n' +
-      'License: ' + '\n' +
-      'License URI: ' + '\n' +
+      this.options.license ? 'License: ' + this.options.license + '\n' : '' +
+      this.options.license ? 'License URI: ' + '\n' : '' +
       'Text Domain: elebee\n' +
       '\n' +
       'Copyright 2018 RTO GmbH\n' +
@@ -266,8 +477,6 @@ class GeneratorElebee extends GeneratorBase {
 
     super(args, opts);
 
-    console.log(Yosay('Hello and welcome to the Elebee WordPress theme generator'));
-
   }
 
   /**
@@ -276,91 +485,11 @@ class GeneratorElebee extends GeneratorBase {
    */
   prompting() {
 
-    return this.prompt([
-      {
-        type: 'confirm',
-        name: 'installWp',
-        message: 'Install Wordpress?',
-        store: true
-      },
-      {
-        when: function (answers) {
-          return answers.installWp;
-        },
-        type: 'input',
-        name: 'wpVersion',
-        message: 'Version',
-        default: 'latest',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'projectName',
-        message: 'Project name',
-        default: 'wordpress',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'siteName',
-        message: 'Enter a theme name',
-        default: 'My Theme Name'
-      },
-      {
-        type: 'input',
-        name: 'description',
-        message: 'Enter a description for your theme',
-        default: 'Custom WordPress Theme'
-      },
-      {
-        type: 'input',
-        name: 'authorName',
-        message: 'Author Name',
-        default: 'RTO GmbH',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'authorEmail',
-        message: 'Author E-Mail',
-        default: 'info@rto.de',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'authorUrl',
-        message: 'Author url',
-        default: 'https://www.rto.de/',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'license',
-        message: 'License',
-        default: 'MIT',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'repositoryType',
-        message: 'Repository type',
-        default: 'git',
-        store: true
-      },
-      {
-        type: 'input',
-        name: 'repositoryUrl',
-        message: 'Repository url',
-        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee.git'
-      },
-      {
-        type: 'input',
-        name: 'themeUrl',
-        message: 'Theme url',
-        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee'
-      }
-    ]).then((answers) => {
-      this.install(answers);
+    console.log(Yosay('Hello and welcome to the Elebee WordPress theme generator'));
+
+    return this.prompt(this.optionDefinitions).then((answers) => {
+      Object.assign(this.options, answers);
+      this.install();
     });
 
   }

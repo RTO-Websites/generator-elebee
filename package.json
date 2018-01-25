@@ -1,6 +1,6 @@
 {
   "name": "generator-elebee",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "dependencies": {
     "cli-spinner": "^0.2.7",
     "download": "^6.2.5",
