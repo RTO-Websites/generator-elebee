@@ -219,7 +219,7 @@ class GeneratorBase extends Generator {
     this.themeUrl = 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee/archive/master.zip';
     this.themePath = this.wpContentPath + '/' + this.themeSlug;
 
-    var downloadOptions = {
+    let downloadOptions = {
       extract: true
     };
     Download(this.themeUrl, this.wpContentPath, downloadOptions).then(() => {
@@ -257,24 +257,24 @@ class GeneratorBase extends Generator {
 
     this.setupStyleCss();
 
-    var execOptions = {
+    let execOptions = {
       cwd: this.themePath
     };
 
     this.initializationCount = 0;
 
-    var npmInstall = new ExecuteCommand('npm install', execOptions, () => {
+    let npmInstall = new ExecuteCommand('npm install', execOptions, () => {
       this.finishThemeInitialization()
     });
     npmInstall.exec();
 
-    var bowerInstall = new ExecuteCommand('bower install', execOptions, () => {
+    let bowerInstall = new ExecuteCommand('bower install', execOptions, () => {
       this.finishThemeInitialization()
     });
     bowerInstall.exec();
 
     execOptions.cwd = this.themePath + '/src';
-    var composerInstall = new ExecuteCommand('composer install', execOptions, () => {
+    let composerInstall = new ExecuteCommand('composer install', execOptions, () => {
       this.finishThemeInitialization()
     });
     composerInstall.exec();
@@ -286,7 +286,7 @@ class GeneratorBase extends Generator {
    */
   setupStyleCss() {
 
-    var styleCSS =
+    let styleCSS =
       '/*\n' +
       'Theme Name: ' + this.options.themeName + '\n' +
       'Description: ' + this.options.themeDescription + '\n' +
