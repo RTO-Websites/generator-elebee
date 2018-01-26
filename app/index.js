@@ -48,6 +48,48 @@ class GeneratorBase extends Generator {
     this.optionDefinitions = [
       {
         when: (answers) => {
+          return !this.options.themeName;
+        },
+        type: 'input',
+        name: 'themeName',
+        message: 'Enter a theme name',
+        default: 'My Theme Name',
+        help: {
+          desc: '',
+          alias: 't',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeDescription;
+        },
+        type: 'input',
+        name: 'themeDescription',
+        message: 'Enter a description for your theme',
+        default: 'Custom WordPress Theme',
+        help: {
+          desc: '',
+          alias: 'd',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeUrl;
+        },
+        type: 'input',
+        name: 'themeUrl',
+        message: 'Theme url',
+        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee',
+        help: {
+          desc: '',
+          alias: 'T',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
           return !this.options.authorName;
         },
         type: 'input',
@@ -88,48 +130,6 @@ class GeneratorBase extends Generator {
         help: {
           desc: '',
           alias: 'u',
-          type: String
-        }
-      },
-      {
-        when: (answers) => {
-          return !this.options.themeName;
-        },
-        type: 'input',
-        name: 'themeName',
-        message: 'Enter a theme name',
-        default: 'My Theme Name',
-        help: {
-          desc: '',
-          alias: 't',
-          type: String
-        }
-      },
-      {
-        when: (answers) => {
-          return !this.options.themeDescription;
-        },
-        type: 'input',
-        name: 'themeDescription',
-        message: 'Enter a description for your theme',
-        default: 'Custom WordPress Theme',
-        help: {
-          desc: '',
-          alias: 'd',
-          type: String
-        }
-      },
-      {
-        when: (answers) => {
-          return !this.options.themeUrl;
-        },
-        type: 'input',
-        name: 'themeUrl',
-        message: 'Theme url',
-        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee',
-        help: {
-          desc: '',
-          alias: 'T',
           type: String
         }
       },
