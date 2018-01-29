@@ -16,7 +16,6 @@ const Yosay = require('yosay');
 const Download = require('download');
 const Fs = require('fs');
 const FsExtra = require('fs.extra');
-const Notifier = UpdateNotifier({pkg});
 const UpdateNotifier = require('update-notifier-plus');
 const Spinner = require('cli-spinner').Spinner;
 const _ = require('underscore.string');
@@ -31,7 +30,14 @@ class GeneratorBase extends Generator {
 
     super(args, opts);
 
-    Notifier.notify();
+    let options = {
+      pkg: pkg,
+      registry: "github",
+      githubOwner: "RTO-Websites"
+    };
+
+    console.log(UpdateNotifier(options));
+    UpdateNotifier(options).notify();
 
     this.initOptionDefinitions();
 
