@@ -46,48 +46,45 @@ class GeneratorBase extends Generator {
   initOptionDefinitions() {
 
     this.optionDefinitions = [
-      // {
-      //   when: (answers) => {
-      //     console.log(this.options.installWp);
-      //     return !this.options.installWp;
-      //   },
-      //   type: 'confirm',
-      //   name: 'installWp',
-      //   message: 'Install Wordpress?',
-      //   store: true,
-      //   help: {
-      //     desc: '',
-      //     alias: 'i',
-      //     type: Boolean
-      //   }
-      // },
-      // {
-      //   when: (answers) => {
-      //     return (answers.installWp || (this.options.installWp && !this.options.wpVersion));
-      //   },
-      //   type: 'input',
-      //   name: 'wpVersion',
-      //   message: 'Version',
-      //   default: 'latest',
-      //   store: true,
-      //   help: {
-      //     desc: '',
-      //     alias: 'v',
-      //     type: String
-      //   }
-      // },
       {
         when: (answers) => {
-          return !this.options.projectName;
+          return !this.options.themeName;
         },
         type: 'input',
-        name: 'projectName',
-        message: 'Project name',
-        default: 'wordpress',
-        store: true,
+        name: 'themeName',
+        message: 'Enter a theme name',
+        default: 'My Theme Name',
         help: {
           desc: '',
-          alias: 'p',
+          alias: 't',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeDescription;
+        },
+        type: 'input',
+        name: 'themeDescription',
+        message: 'Enter a description for your theme',
+        default: 'Custom WordPress Theme',
+        help: {
+          desc: '',
+          alias: 'd',
+          type: String
+        }
+      },
+      {
+        when: (answers) => {
+          return !this.options.themeUrl;
+        },
+        type: 'input',
+        name: 'themeUrl',
+        message: 'Theme url',
+        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee',
+        help: {
+          desc: '',
+          alias: 'T',
           type: String
         }
       },
@@ -133,48 +130,6 @@ class GeneratorBase extends Generator {
         help: {
           desc: '',
           alias: 'u',
-          type: String
-        }
-      },
-      {
-        when: (answers) => {
-          return !this.options.themeName;
-        },
-        type: 'input',
-        name: 'themeName',
-        message: 'Enter a theme name',
-        default: 'My Theme Name',
-        help: {
-          desc: '',
-          alias: 't',
-          type: String
-        }
-      },
-      {
-        when: (answers) => {
-          return !this.options.themeDescription;
-        },
-        type: 'input',
-        name: 'themeDescription',
-        message: 'Enter a description for your theme',
-        default: 'Custom WordPress Theme',
-        help: {
-          desc: '',
-          alias: 'd',
-          type: String
-        }
-      },
-      {
-        when: (answers) => {
-          return !this.options.themeUrl;
-        },
-        type: 'input',
-        name: 'themeUrl',
-        message: 'Theme url',
-        default: 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee',
-        help: {
-          desc: '',
-          alias: 'T',
           type: String
         }
       },
@@ -252,100 +207,19 @@ class GeneratorBase extends Generator {
 
   /**
    *
-   * @param options
-   */
-  install() {
-
-    this.projectPath = this.destinationPath(this.options.projectName);
-
-    if (this.options.installWp) {
-      this.installWp();
-    }
-    else {
-      this.installTheme();
-    }
-
-  }
-
-  /**
-   *
-   */
-  installWp() {
-
-    console.log('');
-    this.spinner.setSpinnerTitle('Installing Wordpress... %s');
-    this.spinner.start();
-
-    this.wpUrl = 'https://wordpress.org/';
-    this.wpUrl += this.options.wpVersion == 'latest' ? 'latest.zip' : 'wordpress-' + this.options.wpVersion + '.zip';
-
-    var downloadOptions = {
-      extract: true
-    };
-    Download(this.wpUrl, this.projectPath, downloadOptions).then(() => {
-      this.unpackWp();
-    });
-
-  }
-
-  /**
-   *
-   */
-  unpackWp() {
-
-    try {
-      this.tmpDir = this.projectPath + '/' + this.options.projectName;
-      Fs.renameSync(this.projectPath + '/wordpress', this.tmpDir);
-      FsExtra.copyRecursive(this.tmpDir, this.projectPath, (error) => {
-        this.finishWpInstallation(error);
-      });
-    }
-    catch (error) {
-      this.onError(error);
-    }
-
-  }
-
-  /**
-   *
-   * @param error
-   */
-  finishWpInstallation(error) {
-
-    if (error) {
-      throw error;
-    }
-    FsExtra.rmrfSync(this.tmpDir);
-
-    this.spinner.stop(true);
-    console.log('WordPress installed!');
-
-    this.installTheme();
-
-  }
-
-  /**
-   *
    */
   installTheme() {
 
     console.log('');
-    // this.spinner.setSpinnerTitle('Installing elebee... %s');
-    // this.spinner.start();
+    this.spinner.setSpinnerTitle('Installing elebee... %s');
+    this.spinner.start();
 
-    // if (!this.options.installWp) {
-    //
-    //   Fs.mkdirSync(this.projectPath);
-    //   Fs.mkdirSync(this.projectPath + '/wp-content');
-    //
-    // }
-
-    this.wpContentPath = this.projectPath + '/wp-content';
+    this.wpContentPath = process.cwd();
     this.themeSlug = _.camelize(_.slugify(_.humanize(this.options.themeName)));
     this.themeUrl = 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee/archive/master.zip';
     this.themePath = this.wpContentPath + '/' + this.themeSlug;
 
-    var downloadOptions = {
+    let downloadOptions = {
       extract: true
     };
     Download(this.themeUrl, this.wpContentPath, downloadOptions).then(() => {
@@ -383,24 +257,24 @@ class GeneratorBase extends Generator {
 
     this.setupStyleCss();
 
-    var execOptions = {
+    let execOptions = {
       cwd: this.themePath
     };
 
     this.initializationCount = 0;
 
-    var npmInstall = new ExecuteCommand('npm install', execOptions, () => {
+    let npmInstall = new ExecuteCommand('npm install', execOptions, () => {
       this.finishThemeInitialization()
     });
     npmInstall.exec();
 
-    var bowerInstall = new ExecuteCommand('bower install', execOptions, () => {
+    let bowerInstall = new ExecuteCommand('bower install', execOptions, () => {
       this.finishThemeInitialization()
     });
     bowerInstall.exec();
 
     execOptions.cwd = this.themePath + '/src';
-    var composerInstall = new ExecuteCommand('composer install', execOptions, () => {
+    let composerInstall = new ExecuteCommand('composer install', execOptions, () => {
       this.finishThemeInitialization()
     });
     composerInstall.exec();
@@ -412,7 +286,7 @@ class GeneratorBase extends Generator {
    */
   setupStyleCss() {
 
-    var styleCSS =
+    let styleCSS =
       '/*\n' +
       'Theme Name: ' + this.options.themeName + '\n' +
       'Description: ' + this.options.themeDescription + '\n' +
@@ -489,7 +363,7 @@ class GeneratorElebee extends GeneratorBase {
 
     return this.prompt(this.optionDefinitions).then((answers) => {
       Object.assign(this.options, answers);
-      this.install();
+      this.installTheme();
     });
 
   }
