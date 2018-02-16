@@ -293,8 +293,8 @@ class GeneratorBase extends Generator {
       'Author: ' + this.options.authorName + '\n' +
       'Author URI: ' + this.options.authorUrl + '\n' +
       'Version: 0.0.1\n' +
-      this.options.license ? 'License: ' + this.options.license + '\n' : '' +
-      this.options.license ? 'License URI: ' + '\n' : '' +
+      (this.options.license && this.options.license !== 'true' ? 'License: ' + this.options.license + '\n' : '') +
+      (this.options.licenseUri && this.options.licenseUri !== 'true' ? 'License URI: '+ this.options.licenseUri + '\n' : '') +
       'Text Domain: elebee\n' +
       '\n' +
       'Copyright 2018 RTO GmbH\n' +
