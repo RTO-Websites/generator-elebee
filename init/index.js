@@ -55,7 +55,7 @@ class GeneratorInit extends GeneratorBase {
    */
   init() {
 
-    (new ExecuteCommand('npm install')).exec();
+    (new ExecuteCommand('npm install --verbose')).exec();
     (new ExecuteCommand('bower install')).exec();
     (new ExecuteCommand('composer install', {cwd: 'src'})).exec();
 

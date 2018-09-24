@@ -253,7 +253,7 @@ class GeneratorBase extends Generator {
 
     this.initializationCount = 0;
 
-    let npmInstall = new ExecuteCommand('npm install', execOptions, () => {
+    let npmInstall = new ExecuteCommand('npm install --verbose', execOptions, () => {
       this.finishThemeInitialization()
     });
     npmInstall.exec();
