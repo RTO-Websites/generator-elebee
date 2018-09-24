@@ -12,7 +12,6 @@
 
 const pkg = require('../package');
 const Generator = require('yeoman-generator');
-const Yosay = require('yosay');
 const Download = require('download');
 const Fs = require('fs');
 const FsExtra = require('fs.extra');
@@ -358,8 +357,6 @@ class GeneratorElebee extends GeneratorBase {
    * @returns {PromiseLike<T> | Promise<T>}
    */
   prompting() {
-
-    console.log(Yosay('Hello and welcome to the Elebee WordPress theme generator'));
 
     return this.prompt(this.optionDefinitions).then((answers) => {
       Object.assign(this.options, answers);
