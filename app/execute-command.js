@@ -6,7 +6,6 @@
 'use strict';
 
 const ChildProcess = require('child_process');
-const Spinner = require('cli-spinner').Spinner;
 
 /**
  * Handles command execution using the NodeJS 'child_process' module.
@@ -27,9 +26,6 @@ class ExecuteCommand {
     this.execOptions = execOptions;
     this.cb = cb;
 
-    this.spinner = new Spinner();
-    this.spinner.setSpinnerString('|/-\\');
-
   }
 
   /**
@@ -37,9 +33,7 @@ class ExecuteCommand {
    */
   exec() {
 
-    this.startLoadingAnimation();
-
-    var child = ChildProcess.exec(this.cmd, this.execOptions, (error, stdout, stderr) => {
+    let child = ChildProcess.exec(this.cmd, this.execOptions, (error, stdout, stderr) => {
       if (typeof(this.cb) === 'function') {
         this.cb();
       }
@@ -51,11 +45,7 @@ class ExecuteCommand {
 
     child.stderr.on('data', (data) => {
 
-      this.stopLoadingAnimation();
-
       this.onError(data);
-
-      this.startLoadingAnimation();
 
     });
 
@@ -67,30 +57,11 @@ class ExecuteCommand {
 
   /**
    *
-   */
-  startLoadingAnimation() {
-
-    this.spinner.setSpinnerTitle('Running "' + this.cmd + '"... %s');
-    this.spinner.start();
-
-  }
-
-  /**
-   *
-   */
-  stopLoadingAnimation() {
-
-    this.spinner.stop(true);
-
-  }
-
-  /**
-   *
    * @param data
    */
   onData(data) {
 
-    var str = data.toString();
+    let str = data.toString();
     str.split(/(\r?\n)/g).forEach((line, index) => {
       if (line !== '\n' && line !== '') {
         console.log(line);
@@ -115,7 +86,6 @@ class ExecuteCommand {
    */
   onExit(code) {
 
-    this.stopLoadingAnimation();
     console.log('Finished "' + this.cmd + '" with code ' + code);
 
   }
