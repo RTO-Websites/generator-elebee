@@ -17,7 +17,6 @@ const Fs = require('fs');
 const FsExtra = require('fs.extra');
 const UpdateNotifier = require('update-notifier');
 const Notifier = UpdateNotifier({pkg});
-const Spinner = require('cli-spinner').Spinner;
 const _ = require('underscore.string');
 const ExecuteCommand = require('./execute-command.js');
 
@@ -33,9 +32,6 @@ class GeneratorBase extends Generator {
     Notifier.notify();
 
     this.initOptionDefinitions();
-
-    this.spinner = new Spinner();
-    this.spinner.setSpinnerString('|/-\\');
 
   }
 
@@ -209,10 +205,6 @@ class GeneratorBase extends Generator {
    */
   installTheme() {
 
-    console.log('');
-    this.spinner.setSpinnerTitle('Installing elebee... %s');
-    this.spinner.start();
-
     this.wpContentPath = process.cwd();
     this.themeSlug = _.camelize(_.slugify(_.humanize(this.options.themeName)));
     this.themeUrl = 'https://github.com/RTO-Websites/Wordpress-Theme-Elebee/archive/master.zip';
@@ -235,7 +227,6 @@ class GeneratorBase extends Generator {
     try {
       Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
 
-      this.spinner.stop(true);
       console.log('elebee installed!');
 
       this.initializeTheme();
@@ -328,8 +319,6 @@ class GeneratorBase extends Generator {
    */
   onError(error) {
 
-    this.spinner.stop();
-    console.log('\n');
     console.error(error);
 
   }
