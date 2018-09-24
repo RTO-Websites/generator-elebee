@@ -33,7 +33,7 @@ class ExecuteCommand {
    */
   exec() {
 
-    var child = ChildProcess.exec(this.cmd, this.execOptions, (error, stdout, stderr) => {
+    let child = ChildProcess.exec(this.cmd, this.execOptions, (error, stdout, stderr) => {
       if (typeof(this.cb) === 'function') {
         this.cb();
       }
@@ -61,7 +61,7 @@ class ExecuteCommand {
    */
   onData(data) {
 
-    var str = data.toString();
+    let str = data.toString();
     str.split(/(\r?\n)/g).forEach((line, index) => {
       if (line !== '\n' && line !== '') {
         console.log(line);
