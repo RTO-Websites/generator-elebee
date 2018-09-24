@@ -227,6 +227,15 @@ class GeneratorBase extends Generator {
     try {
       Fs.renameSync(this.wpContentPath + '/Wordpress-Theme-Elebee-master', this.themePath);
 
+      let packageJsonPath = this.themePath + '/package.json',
+        packageJson = require(packageJsonPath);
+      packageJson.name = this.themeSlug;
+      Fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), (error) => {
+        if (error) {
+          console.log(error);
+        }
+      });
+
       console.log('elebee installed!');
 
       this.initializeTheme();
