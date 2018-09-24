@@ -20,7 +20,7 @@ $ npm install -g yo
 ### Install the generator
 
 ```
-$ npm install -g generator-elebee
+$ npm install -g RTO-Websites/generator-elebee
 ```
 
 ### How to use it
