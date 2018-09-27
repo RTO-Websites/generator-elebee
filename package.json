@@ -1,6 +1,6 @@
 {
   "name": "generator-elebee",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A generator for Yeoman to customize the Elebee WordPress Theme.",
   "repository": {
     "type": "git",
